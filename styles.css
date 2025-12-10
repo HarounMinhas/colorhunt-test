@@ -1,0 +1,365 @@
+:root {
+    --color-primary: #5A9CB5;
+    --color-secondary: #FACE68;
+    --color-accent: #FAAC68;
+    --color-highlight: #FA6868;
+    --color-primary-rgb: 90, 156, 181;
+    --color-secondary-rgb: 250, 206, 104;
+    --color-accent-rgb: 250, 172, 104;
+    --color-highlight-rgb: 250, 104, 104;
+}
+
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Color Widget Styles */
+.color-widget {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+.widget-toggle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--color-primary);
+    border: 3px solid white;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.widget-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.widget-content {
+    position: absolute;
+    top: 60px;
+    right: 0;
+    width: 280px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    padding: 16px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+}
+
+.widget-content.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.widget-title {
+    margin: 0 0 12px 0;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.palette-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.palette-item {
+    padding: 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.palette-item:hover {
+    background: #f8f9fa;
+    border-color: var(--color-primary);
+}
+
+.palette-item.active {
+    background: #f0f7ff;
+    border-color: var(--color-primary);
+}
+
+.palette-preview {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-bottom: 6px;
+}
+
+.palette-preview span {
+    height: 30px;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.palette-name {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+    padding: 100px 0;
+}
+
+/* Navigation */
+.navbar {
+    background: var(--color-primary) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 600;
+    font-size: 1.5rem;
+}
+
+/* Section Titles */
+.section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: var(--color-primary);
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.section-title::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 4px;
+    background: var(--color-highlight);
+    border-radius: 2px;
+}
+
+/* Bootstrap Override - Primary Color */
+.btn-primary,
+.bg-primary,
+.badge.bg-primary,
+.list-group-item-primary,
+.alert-primary {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+
+.btn-primary:hover {
+    background-color: rgba(var(--color-primary-rgb), 0.85) !important;
+    border-color: rgba(var(--color-primary-rgb), 0.85) !important;
+}
+
+.text-primary {
+    color: var(--color-primary) !important;
+}
+
+/* Bootstrap Override - Secondary Color */
+.btn-secondary,
+.bg-secondary,
+.badge.bg-secondary {
+    background-color: var(--color-secondary) !important;
+    border-color: var(--color-secondary) !important;
+    color: #333 !important;
+}
+
+.btn-secondary:hover {
+    background-color: rgba(var(--color-secondary-rgb), 0.85) !important;
+    border-color: rgba(var(--color-secondary-rgb), 0.85) !important;
+}
+
+/* Bootstrap Override - Success Color */
+.btn-success,
+.bg-success,
+.badge.bg-success,
+.list-group-item-success,
+.alert-success,
+.progress-bar.bg-success {
+    background-color: var(--color-accent) !important;
+    border-color: var(--color-accent) !important;
+    color: #333 !important;
+}
+
+/* Bootstrap Override - Danger Color */
+.btn-danger,
+.bg-danger,
+.badge.bg-danger,
+.list-group-item-danger,
+.alert-danger {
+    background-color: var(--color-highlight) !important;
+    border-color: var(--color-highlight) !important;
+}
+
+/* Bootstrap Override - Warning Color */
+.btn-warning,
+.badge.bg-warning,
+.list-group-item-warning,
+.alert-warning,
+.progress-bar.bg-warning {
+    background-color: var(--color-secondary) !important;
+    border-color: var(--color-secondary) !important;
+    color: #333 !important;
+}
+
+/* Cards */
+.card {
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.card.bg-primary {
+    background-color: var(--color-primary) !important;
+}
+
+/* Links */
+a {
+    color: var(--color-primary);
+}
+
+a:hover {
+    color: var(--color-accent);
+}
+
+/* List Group Active */
+.list-group-item.active,
+.list-group-item-action.active {
+    background-color: var(--color-primary) !important;
+    border-color: var(--color-primary) !important;
+}
+
+/* Progress Bars */
+.progress-bar {
+    background-color: var(--color-primary) !important;
+}
+
+/* Spinners */
+.spinner-border.text-primary,
+.spinner-grow.text-primary {
+    color: var(--color-primary) !important;
+}
+
+.spinner-border.text-success,
+.spinner-grow.text-success {
+    color: var(--color-accent) !important;
+}
+
+.spinner-border.text-danger,
+.spinner-grow.text-danger {
+    color: var(--color-highlight) !important;
+}
+
+.spinner-border.text-warning,
+.spinner-grow.text-warning {
+    color: var(--color-secondary) !important;
+}
+
+/* Accordion */
+.accordion-button:not(.collapsed) {
+    background-color: rgba(var(--color-primary-rgb), 0.1) !important;
+    color: var(--color-primary) !important;
+}
+
+.accordion-button:focus {
+    border-color: var(--color-primary) !important;
+    box-shadow: 0 0 0 0.25rem rgba(var(--color-primary-rgb), 0.25) !important;
+}
+
+/* Breadcrumb */
+.breadcrumb-item.active {
+    color: var(--color-primary) !important;
+}
+
+.breadcrumb-item a {
+    color: var(--color-primary);
+}
+
+/* Pagination */
+.page-link {
+    color: var(--color-primary);
+}
+
+.page-link:hover {
+    color: var(--color-accent);
+    background-color: rgba(var(--color-primary-rgb), 0.1);
+}
+
+.page-item.active .page-link {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* Forms */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 0.25rem rgba(var(--color-primary-rgb), 0.25);
+}
+
+.form-check-input:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+/* Footer */
+.footer-section {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
+}
+
+/* Smooth scrolling */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .hero-section {
+        padding: 60px 0;
+    }
+    
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+    
+    .color-widget {
+        top: 10px;
+        right: 10px;
+    }
+    
+    .widget-toggle {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+    
+    .widget-content {
+        width: 260px;
+    }
+}
