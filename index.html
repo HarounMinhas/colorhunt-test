@@ -16,84 +16,31 @@
     <!-- Color Palette Widget (Floating) -->
     <div id="colorWidget" class="color-widget">
         <button id="widgetToggle" class="widget-toggle" aria-label="Toggle Color Palette">
-            <i class="bi bi-palette-fill"></i>
+            🎨
         </button>
         <div id="widgetContent" class="widget-content">
-            <h6 class="widget-title">Kleurenschema's</h6>
+            <div class="widget-header">
+                <h6 class="widget-title">ColorHunt Importer</h6>
+                <button id="widgetClose" class="widget-close-btn">✕</button>
+            </div>
             
             <!-- URL Input Section -->
             <div class="palette-input-section">
-                <label for="paletteUrl" class="input-label">ColorHunt URL:</label>
-                <div class="input-group">
-                    <input 
-                        type="text" 
-                        id="paletteUrl" 
-                        class="form-control form-control-sm" 
-                        placeholder="https://colorhunt.co/palette/...">
-                    <button class="btn btn-sm btn-primary" id="applyUrlBtn" type="button">
-                        <i class="bi bi-check-lg"></i>
-                    </button>
-                </div>
-                <small class="text-muted">Of voer kleuren in: #FF5733-#33FF57-#3357FF-#F333FF</small>
+                <input 
+                    type="text" 
+                    id="paletteUrl" 
+                    class="form-control form-control-sm" 
+                    placeholder="Paste ColorHunt link...">
+                <p class="input-hint">Paste a link to auto-add. Duplicates will flash.</p>
             </div>
-
-            <div class="divider"></div>
             
-            <div class="palette-list">
-                <div class="palette-item active" data-colors='["#5A9CB5", "#FACE68", "#FAAC68", "#FA6868"]'>
-                    <div class="palette-preview">
-                        <span style="background: #5A9CB5;"></span>
-                        <span style="background: #FACE68;"></span>
-                        <span style="background: #FAAC68;"></span>
-                        <span style="background: #FA6868;"></span>
-                    </div>
-                    <div class="palette-name">Standaard</div>
-                </div>
-                <div class="palette-item" data-colors='["#222831", "#393E46", "#00ADB5", "#EEEEEE"]'>
-                    <div class="palette-preview">
-                        <span style="background: #222831;"></span>
-                        <span style="background: #393E46;"></span>
-                        <span style="background: #00ADB5;"></span>
-                        <span style="background: #EEEEEE;"></span>
-                    </div>
-                    <div class="palette-name">Dark Blue</div>
-                </div>
-                <div class="palette-item" data-colors='["#F7B801", "#F18701", "#F35B04", "#C1121F"]'>
-                    <div class="palette-preview">
-                        <span style="background: #F7B801;"></span>
-                        <span style="background: #F18701;"></span>
-                        <span style="background: #F35B04;"></span>
-                        <span style="background: #C1121F;"></span>
-                    </div>
-                    <div class="palette-name">Warm Sunset</div>
-                </div>
-                <div class="palette-item" data-colors='["#06283D", "#1363DF", "#47B5FF", "#DFF6FF"]'>
-                    <div class="palette-preview">
-                        <span style="background: #06283D;"></span>
-                        <span style="background: #1363DF;"></span>
-                        <span style="background: #47B5FF;"></span>
-                        <span style="background: #DFF6FF;"></span>
-                    </div>
-                    <div class="palette-name">Ocean</div>
-                </div>
-                <div class="palette-item" data-colors='["#2B3467", "#BAD7E9", "#FCBAAD", "#EB455F"]'>
-                    <div class="palette-preview">
-                        <span style="background: #2B3467;"></span>
-                        <span style="background: #BAD7E9;"></span>
-                        <span style="background: #FCBAAD;"></span>
-                        <span style="background: #EB455F;"></span>
-                    </div>
-                    <div class="palette-name">Berry</div>
-                </div>
-                <div class="palette-item" data-colors='["#1B262C", "#0F4C75", "#3282B8", "#BBE1FA"]'>
-                    <div class="palette-preview">
-                        <span style="background: #1B262C;"></span>
-                        <span style="background: #0F4C75;"></span>
-                        <span style="background: #3282B8;"></span>
-                        <span style="background: #BBE1FA;"></span>
-                    </div>
-                    <div class="palette-name">Deep Sea</div>
-                </div>
+            <!-- Palette List -->
+            <div id="paletteList" class="palette-list">
+                <!-- Default palettes will be added by JavaScript -->
+            </div>
+            
+            <div id="emptyState" class="empty-state" style="display: none;">
+                No palettes yet.
             </div>
         </div>
     </div>

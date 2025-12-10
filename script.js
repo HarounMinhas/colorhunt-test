@@ -1,13 +1,44 @@
-// Color Widget Toggle
+// State
+let palettes = [];
+let highlightedId = null;
+let highlightTimer = null;
+
+// DOM Elements
 const widgetToggle = document.getElementById('widgetToggle');
 const widgetContent = document.getElementById('widgetContent');
-const paletteItems = document.querySelectorAll('.palette-item');
+const widgetClose = document.getElementById('widgetClose');
 const paletteUrlInput = document.getElementById('paletteUrl');
-const applyUrlBtn = document.getElementById('applyUrlBtn');
+const paletteList = document.getElementById('paletteList');
+const emptyState = document.getElementById('emptyState');
+
+// Default palettes
+const defaultPalettes = [
+    {
+        url: 'https://colorhunt.co/palette/5a9cb5face68faac68fa6868',
+        colors: ['#5A9CB5', '#FACE68', '#FAAC68', '#FA6868']
+    },
+    {
+        url: 'https://colorhunt.co/palette/22283100adb5393e46eeeeee',
+        colors: ['#222831', '#00ADB5', '#393E46', '#EEEEEE']
+    },
+    {
+        url: 'https://colorhunt.co/palette/06283d1363df47b5ffdff6ff',
+        colors: ['#06283D', '#1363DF', '#47B5FF', '#DFF6FF']
+    }
+];
 
 // Toggle widget
-widgetToggle.addEventListener('click', () => {
+widgetToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
     widgetContent.classList.toggle('active');
+    if (widgetContent.classList.contains('active')) {
+        paletteUrlInput.focus();
+    }
+});
+
+// Close widget with close button
+widgetClose.addEventListener('click', () => {
+    widgetContent.classList.remove('active');
 });
 
 // Close widget when clicking outside
@@ -18,47 +49,40 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Extract colors from ColorHunt URL or direct input
-function extractColorsFromInput(input) {
-    const trimmedInput = input.trim();
-    
-    // Check if it's a ColorHunt URL
-    const urlMatch = trimmedInput.match(/colorhunt\.co\/palette\/([a-fA-F0-9]+)/);
-    if (urlMatch) {
-        const colorString = urlMatch[1];
-        // Split into groups of 6 characters (hex colors without #)
-        const colors = [];
-        for (let i = 0; i < colorString.length; i += 6) {
-            if (i + 6 <= colorString.length) {
-                colors.push('#' + colorString.substring(i, i + 6).toUpperCase());
-            }
-        }
-        if (colors.length >= 4) {
-            return colors.slice(0, 4);
-        }
+// Prevent closing when clicking inside widget
+widgetContent.addEventListener('click', (e) => {
+    e.stopPropagation();
+});
+
+// Extract colors from ColorHunt URL
+function extractColors(url) {
+    try {
+        const match = url.match(/palette\/([a-fA-F0-9]+)/);
+        if (!match || !match[1]) return null;
+        
+        const hexString = match[1];
+        const colors = hexString.match(/.{1,6}/g);
+        
+        return (colors && colors.length > 0) 
+            ? colors.map(c => `#${c.toUpperCase()}`) 
+            : null;
+    } catch (e) {
+        return null;
     }
-    
-    // Check if it's direct hex codes separated by dashes or spaces
-    const hexPattern = /#?([a-fA-F0-9]{6})/g;
-    const matches = [...trimmedInput.matchAll(hexPattern)];
-    if (matches.length >= 4) {
-        return matches.slice(0, 4).map(m => '#' + m[1].toUpperCase());
-    }
-    
-    return null;
 }
 
-// Apply color palette
+// Apply color palette to page
 function applyColorPalette(colors) {
+    if (colors.length < 4) return;
+    
     const root = document.documentElement;
     
-    // Update CSS variables
     root.style.setProperty('--color-primary', colors[0]);
     root.style.setProperty('--color-secondary', colors[1]);
     root.style.setProperty('--color-accent', colors[2]);
     root.style.setProperty('--color-highlight', colors[3]);
     
-    // Convert hex to RGB for rgba usage
+    // Convert hex to RGB
     const hexToRgb = (hex) => {
         const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
         return result ? {
@@ -78,72 +102,150 @@ function applyColorPalette(colors) {
     if (rgb3) root.style.setProperty('--color-accent-rgb', `${rgb3.r}, ${rgb3.g}, ${rgb3.b}`);
     if (rgb4) root.style.setProperty('--color-highlight-rgb', `${rgb4.r}, ${rgb4.g}, ${rgb4.b}`);
     
-    // Update widget toggle button color
     widgetToggle.style.backgroundColor = colors[0];
 }
 
-// Apply URL button click handler
-applyUrlBtn.addEventListener('click', () => {
-    const input = paletteUrlInput.value;
-    const colors = extractColorsFromInput(input);
+// Create palette card HTML
+function createPaletteCard(palette, index) {
+    const card = document.createElement('div');
+    card.className = 'palette-card';
+    card.dataset.id = palette.id;
     
-    if (colors) {
-        applyColorPalette(colors);
-        
-        // Remove active class from all preset items
-        paletteItems.forEach(i => i.classList.remove('active'));
-        
-        // Visual feedback
-        paletteUrlInput.classList.add('is-valid');
-        paletteUrlInput.classList.remove('is-invalid');
-        setTimeout(() => {
-            paletteUrlInput.classList.remove('is-valid');
-        }, 2000);
-    } else {
-        // Error feedback
-        paletteUrlInput.classList.add('is-invalid');
-        paletteUrlInput.classList.remove('is-valid');
-        setTimeout(() => {
-            paletteUrlInput.classList.remove('is-invalid');
-        }, 2000);
+    const isHighlighted = palette.id === highlightedId;
+    if (isHighlighted) {
+        card.classList.add('highlighted');
     }
-});
-
-// Allow pressing Enter in the input field
-paletteUrlInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        applyUrlBtn.click();
-    }
-});
-
-// Add click event to each palette item
-paletteItems.forEach(item => {
-    item.addEventListener('click', () => {
-        // Remove active class from all items
-        paletteItems.forEach(i => i.classList.remove('active'));
-        
-        // Add active class to clicked item
-        item.classList.add('active');
-        
-        // Get colors from data attribute
-        const colors = JSON.parse(item.getAttribute('data-colors'));
-        
-        // Apply the palette
-        applyColorPalette(colors);
-        
-        // Clear the input field
-        paletteUrlInput.value = '';
-        paletteUrlInput.classList.remove('is-valid', 'is-invalid');
+    
+    // Preview container
+    const previewContainer = document.createElement('div');
+    previewContainer.className = 'palette-preview-container';
+    palette.colors.forEach(color => {
+        const colorBlock = document.createElement('div');
+        colorBlock.className = 'palette-color-block';
+        colorBlock.style.backgroundColor = color;
+        colorBlock.title = color;
+        previewContainer.appendChild(colorBlock);
     });
+    
+    // Info container
+    const infoContainer = document.createElement('div');
+    infoContainer.className = 'palette-info';
+    
+    const paletteId = document.createElement('span');
+    paletteId.className = 'palette-id';
+    paletteId.textContent = `#${palette.id.toString().slice(-4)}`;
+    
+    const colorCodes = document.createElement('span');
+    colorCodes.className = 'palette-codes';
+    colorCodes.textContent = palette.colors.join(', ');
+    
+    infoContainer.appendChild(paletteId);
+    infoContainer.appendChild(colorCodes);
+    
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'palette-delete-btn';
+    deleteBtn.innerHTML = '✕';
+    deleteBtn.onclick = (e) => {
+        e.stopPropagation();
+        removePalette(palette.id);
+    };
+    
+    // Click to apply
+    card.onclick = () => {
+        applyColorPalette(palette.colors);
+    };
+    
+    card.appendChild(previewContainer);
+    card.appendChild(infoContainer);
+    card.appendChild(deleteBtn);
+    
+    return card;
+}
+
+// Render palette list
+function renderPalettes() {
+    paletteList.innerHTML = '';
+    
+    if (palettes.length === 0) {
+        emptyState.style.display = 'block';
+        paletteList.style.display = 'none';
+    } else {
+        emptyState.style.display = 'none';
+        paletteList.style.display = 'flex';
+        
+        palettes.forEach((palette, index) => {
+            const card = createPaletteCard(palette, index);
+            paletteList.appendChild(card);
+        });
+    }
+}
+
+// Add palette
+function addPalette(url, colors) {
+    const uniqueColorKey = colors.join('-');
+    const existingPalette = palettes.find(p => p.colorKey === uniqueColorKey);
+    
+    if (existingPalette) {
+        // DUPLICATE FOUND: Flash effect
+        highlightedId = existingPalette.id;
+        renderPalettes();
+        
+        if (highlightTimer) clearTimeout(highlightTimer);
+        highlightTimer = setTimeout(() => {
+            highlightedId = null;
+            renderPalettes();
+        }, 1500);
+        
+        return false;
+    } else {
+        // NEW PALETTE: Add to list
+        const newPalette = {
+            id: Date.now(),
+            url: url,
+            colors: colors,
+            colorKey: uniqueColorKey,
+            timestamp: new Date().toLocaleTimeString()
+        };
+        
+        palettes.unshift(newPalette);
+        renderPalettes();
+        return true;
+    }
+}
+
+// Remove palette
+function removePalette(id) {
+    palettes = palettes.filter(p => p.id !== id);
+    renderPalettes();
+}
+
+// Handle input change with auto-detection
+paletteUrlInput.addEventListener('input', (e) => {
+    const value = e.target.value;
+    const extractedColors = extractColors(value);
+    
+    if (extractedColors) {
+        addPalette(value, extractedColors);
+        paletteUrlInput.value = '';
+    }
 });
 
-// Apply default palette on load
-window.addEventListener('DOMContentLoaded', () => {
-    const defaultPalette = document.querySelector('.palette-item.active');
-    if (defaultPalette) {
-        const colors = JSON.parse(defaultPalette.getAttribute('data-colors'));
-        applyColorPalette(colors);
+// Initialize with default palettes
+function initializeDefaultPalettes() {
+    defaultPalettes.forEach(palette => {
+        addPalette(palette.url, palette.colors);
+    });
+    
+    // Apply first palette
+    if (palettes.length > 0) {
+        applyColorPalette(palettes[0].colors);
     }
+}
+
+// Initialize on load
+window.addEventListener('DOMContentLoaded', () => {
+    initializeDefaultPalettes();
 });
 
 // Smooth scroll for navigation links
