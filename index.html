@@ -20,6 +20,25 @@
         </button>
         <div id="widgetContent" class="widget-content">
             <h6 class="widget-title">Kleurenschema's</h6>
+            
+            <!-- URL Input Section -->
+            <div class="palette-input-section">
+                <label for="paletteUrl" class="input-label">ColorHunt URL:</label>
+                <div class="input-group">
+                    <input 
+                        type="text" 
+                        id="paletteUrl" 
+                        class="form-control form-control-sm" 
+                        placeholder="https://colorhunt.co/palette/...">
+                    <button class="btn btn-sm btn-primary" id="applyUrlBtn" type="button">
+                        <i class="bi bi-check-lg"></i>
+                    </button>
+                </div>
+                <small class="text-muted">Of voer kleuren in: #FF5733-#33FF57-#3357FF-#F333FF</small>
+            </div>
+
+            <div class="divider"></div>
+            
             <div class="palette-list">
                 <div class="palette-item active" data-colors='["#5A9CB5", "#FACE68", "#FAAC68", "#FA6868"]'>
                     <div class="palette-preview">
