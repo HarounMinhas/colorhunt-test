@@ -1,6 +1,7 @@
 // State
 let palettes = [];
 let highlightedId = null;
+let activePaletteId = null;
 let highlightTimer = null;
 
 // DOM Elements
@@ -72,7 +73,7 @@ function extractColors(url) {
 }
 
 // Apply color palette to page
-function applyColorPalette(colors) {
+function applyColorPalette(colors, paletteId) {
     if (colors.length < 4) return;
     
     const root = document.documentElement;
@@ -103,6 +104,10 @@ function applyColorPalette(colors) {
     if (rgb4) root.style.setProperty('--color-highlight-rgb', `${rgb4.r}, ${rgb4.g}, ${rgb4.b}`);
     
     widgetToggle.style.backgroundColor = colors[0];
+    
+    // Update active palette
+    activePaletteId = paletteId;
+    renderPalettes();
 }
 
 // Create palette card HTML
@@ -112,8 +117,13 @@ function createPaletteCard(palette, index) {
     card.dataset.id = palette.id;
     
     const isHighlighted = palette.id === highlightedId;
+    const isActive = palette.id === activePaletteId;
+    
     if (isHighlighted) {
         card.classList.add('highlighted');
+    }
+    if (isActive) {
+        card.classList.add('active');
     }
     
     // Preview container
@@ -153,7 +163,7 @@ function createPaletteCard(palette, index) {
     
     // Click to apply
     card.onclick = () => {
-        applyColorPalette(palette.colors);
+        applyColorPalette(palette.colors, palette.id);
     };
     
     card.appendChild(previewContainer);
@@ -217,6 +227,12 @@ function addPalette(url, colors) {
 // Remove palette
 function removePalette(id) {
     palettes = palettes.filter(p => p.id !== id);
+    
+    // If the removed palette was active, set the first one as active
+    if (activePaletteId === id && palettes.length > 0) {
+        applyColorPalette(palettes[0].colors, palettes[0].id);
+    }
+    
     renderPalettes();
 }
 
@@ -239,7 +255,7 @@ function initializeDefaultPalettes() {
     
     // Apply first palette
     if (palettes.length > 0) {
-        applyColorPalette(palettes[0].colors);
+        applyColorPalette(palettes[0].colors, palettes[0].id);
     }
 }
 
