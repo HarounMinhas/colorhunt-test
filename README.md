@@ -2,10 +2,6 @@
 
 A live demo application for testing the refactored ColorHunt Importer component with modular architecture.
 
-## Live Demo
-
-View the live application at: https://harounminhas.github.io/colorhunt-test
-
 ## Features
 
 - Smart ColorHunt URL parser with automatic palette detection
